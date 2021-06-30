@@ -60,16 +60,17 @@ export abstract class Method extends Decorator {
    * Execute a guard with params
    */
   getGuardFunction(): (...params: any[]) => Promise<any> {
+    const guards = this.guards;
     const next = async (
       params: any,
       index: number,
       paramsToNext: any
     ) => {
       const nextFn = () => next(params, index + 1, paramsToNext);
-      const guardToExecute = this.guards[index];
+      const guardToExecute = guards[index];
       let res: any;
 
-      if (index >= this.guards.length - 1) {
+      if (index >= guards.length - 1) {
         // If it's the main method
         res = await (guardToExecute.fn as any)(
           // method(...ParsedOptions, [Interaction, Client], ...) => method(...ParsedOptions, Interaction, Client, ...)
