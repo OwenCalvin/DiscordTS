@@ -3,20 +3,27 @@ import {
   ApplicationCommandPermissionData,
   CommandInteraction,
   CommandInteractionOption,
-  Snowflake,
 } from "discord.js";
-import { DOption, Client, SubValueType, PermissionType } from "../..";
+import { DOption, Client } from "../..";
 import { Method } from "./Method";
 
 export class DSlash extends Method {
-  private _description: string;
-  private _name: string;
-  private _defaultPermission: boolean = true;
+  private _description!: string;
+  private _name!: string;
+  private _defaultPermission!: boolean;
   private _options: DOption[] = [];
-  private _permissions: { id: string, type: PermissionType }[] = [];
-  private _guilds: string[];
-  private _group: string;
-  private _subgroup: string;
+  private _permissions: ApplicationCommandPermissionData[] = [];
+  private _guilds!: string[];
+  private _group!: string;
+  private _subgroup!: string;
+  private _botIds!: string[];
+
+  get botIds() {
+    return this._botIds;
+  }
+  set botIds(value) {
+    this._botIds = value;
+  }
 
   get group() {
     return this._group;
@@ -81,15 +88,17 @@ export class DSlash extends Method {
   static create(
     name: string,
     description?: string,
-    defaultPermission: boolean = true,
-    guilds?: string[]
+    defaultPermission?: boolean,
+    guilds?: string[],
+    botIds?: string[]
   ) {
     const slash = new DSlash();
 
     slash.name = name.toLowerCase();
     slash.description = description || slash.name;
-    slash.defaultPermission = defaultPermission;
+    slash.defaultPermission = defaultPermission ?? true;
     slash.guilds = guilds || Client.slashGuilds;
+    slash.botIds = botIds || [];
 
     return slash;
   }
@@ -99,21 +108,17 @@ export class DSlash extends Method {
       this.name,
       "SUB_COMMAND",
       this.description
-    ).decorate(
-      this.classRef,
-      this.key,
-      this.method,
-      this.from,
-      this.index
-    );
+    ).decorate(this.classRef, this.key, this.method, this.from, this.index);
     option.options = this.options;
 
     return option;
   }
 
   toObject(): ApplicationCommandData {
-    const options = [...this.options].reverse().map((option) => option.toObject());
-    
+    const options = [...this.options]
+      .reverse()
+      .map((option) => option.toObject());
+
     return {
       name: this.name,
       description: this.description,
@@ -122,17 +127,11 @@ export class DSlash extends Method {
     };
   }
 
-  getPermissions(): ApplicationCommandPermissionData[] {
-    return this.permissions.map((permission) => ({
-      permission: true,
-      id: permission.id as Snowflake,
-      type: permission.type,
-    }));
-  }
-
-  getLastNestedOption(options: Map<string, CommandInteractionOption>): CommandInteractionOption[] {
+  getLastNestedOption(
+    options: Map<string, CommandInteractionOption>
+  ): CommandInteractionOption[] {
     const arrOptions = Array.from(options?.values());
-    
+
     if (!arrOptions?.[0]?.options) {
       return arrOptions;
     }
@@ -143,10 +142,8 @@ export class DSlash extends Method {
   parseParams(interaction: CommandInteraction) {
     const options = this.getLastNestedOption(interaction.options);
 
-    const values = this.options.map((opt, index) => {
-      return options[index]?.value;
-    });
-
-    return values;
+    return this.options
+      .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+      .map((op) => options.find((o) => o.name === op.name)?.value);
   }
 }

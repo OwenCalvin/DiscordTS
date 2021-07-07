@@ -1,8 +1,17 @@
-import { ClientOptions as DiscordJSClientOptions } from "discord.js";
+import { ClientOptions as DiscordJSClientOptions, Message } from "discord.js";
 import { GuardFunction } from "../public/GuardFunction";
-import { LoadClass } from "./LoadClass";
 
 export interface ClientOptions extends DiscordJSClientOptions {
+  /**
+   * Specifiy bot id (added for multiple bot support)
+   */
+  botId?: string;
+
+  /**
+   * bot prefix resolver
+   */
+  prefix?: string | ((message: Message) => Promise<string>);
+
   /**
    * Do not log anything in the console
    */
@@ -11,7 +20,7 @@ export interface ClientOptions extends DiscordJSClientOptions {
   /**
    * The classes to load for your discord bot
    */
-  classes?: LoadClass[];
+  classes?: string[];
 
   /**
    * The global guards

@@ -1,27 +1,36 @@
 import { Decorator } from "./Decorator";
-import {
-  DGuard,
-  DSlash,
-  DIService,
-  DOn
-} from "../..";
-import { PermissionType } from "../../types";
+import { DGuard, DSlash, DIService, DOn } from "../..";
+import { DButton } from "./DButton";
+import { DSelectMenu } from "./DSelectMenu";
+import { ApplicationCommandPermissionData } from "discord.js";
+import { DCommand } from "./DCommand";
 
 export class DDiscord extends Decorator {
   private _guards: DGuard[] = [];
+  private _buttons: DButton[] = [];
+  private _selectMenus: DSelectMenu[] = [];
   private _slashes: DSlash[] = [];
+  private _commands: DCommand[] = [];
   private _events: DOn[] = [];
-  private _description: string;
-  private _name: string;
-  private _defaultPermission: boolean = true;
-  private _permissions: { id: string, type: PermissionType }[] = [];
+  private _description!: string;
+  private _name!: string;
+  private _defaultPermission = true;
+  private _permissions: ApplicationCommandPermissionData[] = [];
   private _guilds: string[] = [];
+  private _botIds: string[] = [];
 
   get permissions() {
     return this._permissions;
   }
   set permissions(value) {
     this._permissions = value;
+  }
+
+  get botIds() {
+    return this._botIds;
+  }
+  set botIds(value) {
+    this._botIds = value;
   }
 
   get guilds() {
@@ -66,6 +75,27 @@ export class DDiscord extends Decorator {
     this._slashes = value;
   }
 
+  get commands() {
+    return this._commands;
+  }
+  set commands(value) {
+    this._commands = value;
+  }
+
+  get buttons() {
+    return this._buttons;
+  }
+  set buttons(value) {
+    this._buttons = value;
+  }
+
+  get selectMenus() {
+    return this._selectMenus;
+  }
+  set selectMenus(value) {
+    this._selectMenus = value;
+  }
+
   get events() {
     return this._events;
   }
@@ -83,7 +113,7 @@ export class DDiscord extends Decorator {
 
   static create(name: string) {
     const discord = new DDiscord();
-  
+
     discord.name = name;
 
     return discord;

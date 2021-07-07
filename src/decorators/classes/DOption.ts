@@ -9,16 +9,22 @@ import {
   VoiceChannel,
 } from "discord.js";
 import { Decorator } from "../classes/Decorator";
-import { DChoice, Client, OptionValueType, StringOptionType, OptionType } from "../..";
+import {
+  DChoice,
+  Client,
+  OptionValueType,
+  StringOptionType,
+  OptionType,
+} from "../..";
 
 export class DOption extends Decorator {
-  private _required: boolean = false;
-  private _name: string;
-  private _type: OptionValueType;
-  private _description: string;
+  private _required = false;
+  private _name!: string;
+  private _type!: OptionValueType;
+  private _description!: string;
   private _choices: DChoice[] = [];
   private _options: DOption[] = [];
-  private _isNode: boolean = false;
+  private _isNode = false;
 
   get isNode() {
     return this._isNode;
@@ -93,6 +99,8 @@ export class DOption extends Decorator {
         return OptionType.USER;
       case ClientUser:
         return OptionType.USER;
+      default:
+        return OptionType.STRING;
     }
   }
 
@@ -126,7 +134,9 @@ export class DOption extends Decorator {
       type: this.stringType,
       required: this.required,
       choices: this.choices.map((choice) => choice.toObject()),
-      options: [...this.options].reverse().map((option) => option.toObject()) as ApplicationCommandOption[]
+      options: [...this.options]
+        .reverse()
+        .map((option) => option.toObject()) as ApplicationCommandOption[],
     };
 
     if (!this.isNode) {

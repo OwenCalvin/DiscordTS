@@ -1,11 +1,11 @@
 import { DecoratorUtils } from "../../logic";
 
 export class Decorator {
-  protected _classRef: Function;
-  protected _from: Function;
-  protected _key: string;
-  protected _method: Function;
-  protected _index: number = undefined;
+  protected _classRef!: Function;
+  protected _from!: Function;
+  protected _key!: string;
+  protected _method!: Function;
+  protected _index: number | undefined = undefined;
 
   get index() {
     return this._index;
@@ -39,6 +39,7 @@ export class Decorator {
   }
 
   protected constructor() {
+    // empty constructor
   }
 
   decorateUnknown(
@@ -58,7 +59,7 @@ export class Decorator {
 
     return this.decorate(
       finalClassRef,
-      finalKey,
+      finalKey as string,
       finalMethod,
       finalClassRef,
       index
@@ -75,13 +76,15 @@ export class Decorator {
     this._from = from || classRef;
     this._classRef = classRef;
     this._key = key;
-    this._method = method;
-    this._index = index;
+    this._method = method as Function;
+    this._index = index as number;
 
     this.update();
 
     return this;
   }
 
-  update() {}
+  update() {
+    // empty function
+  }
 }

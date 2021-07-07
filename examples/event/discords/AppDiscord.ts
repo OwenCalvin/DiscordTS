@@ -1,12 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Discord, On, Client, ArgsOf } from "../../../src";
 
 @Discord()
 export abstract class AppDiscord {
-  @On("message")
-  onMessage(
-    [message]: ArgsOf<"message">,
-    client: Client
-  ) {
+  @On("messageCreate")
+  onMessage([message]: ArgsOf<"messageCreate">, client: Client) {
     console.log(message.content);
   }
 }

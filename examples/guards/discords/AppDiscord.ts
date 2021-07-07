@@ -1,18 +1,20 @@
 import { CommandInteraction } from "discord.js";
 import { Discord, On, Client, ArgsOf, Guard, Slash } from "../../../src";
-import { Say } from "../guards/Say";
+import { NotBot } from "../guards/NotBot";
 
 @Discord()
 export abstract class AppDiscord {
-  @On("message")
-  @Guard(Say("hello"))
-  onMessage([message]: ArgsOf<"message">, client: Client) {
+  @On("messageCreate")
+  @Guard(NotBot)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onMessage([message]: ArgsOf<"messageCreate">, _client: Client) {
     console.log(message.content);
   }
 
   @Slash("hello")
-  @Guard(Say("hello"))
-  hello(interaction: CommandInteraction, client: Client) {
+  @Guard(NotBot)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  hello(interaction: CommandInteraction, _client: Client) {
     console.log(interaction);
   }
 }
